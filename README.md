@@ -84,5 +84,5 @@ TestAuthApp/
 ## 📧 Contact
 
 - **Email**: ken.thea02@gmail.com  
-- **GitHub**: [@kenthdev](https://github.com/Ken-Razor)  
-- **LinkedIn**: [Your Name](https://www.linkedin.com/in/kenthea2)
+- **GitHub**: [@Ken-Razor](https://github.com/Ken-Razor)  
+- **LinkedIn**: [Ken Sanio Melenium Thea Agatha](https://www.linkedin.com/in/kenthea2)
