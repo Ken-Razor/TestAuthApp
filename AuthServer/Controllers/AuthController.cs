@@ -55,14 +55,21 @@ namespace AuthServer.Controllers
             var result = await _userManager.CreateAsync(user, request.Password);
 
             if (!result.Succeeded)
-                return BadRequest(result.Errors.Select(e => e.Description));
+            {
+                var errors = result.Errors.Select(e => e.Description).ToList();
+                return BadRequest(new
+                {
+                    Title = "Password requirements not met",
+                    Errors = errors
+                });
+            }
 
             // Response
-            return Ok(new 
+            return Ok(new
             {
                 Success = true,
                 Message = "Registrasi berhasil",
-                UserId = user.Id 
+                UserId = user.Id
             });
         }
 
@@ -76,38 +83,55 @@ namespace AuthServer.Controllers
             if (string.IsNullOrEmpty(request.Password))
                 return BadRequest("Password wajib diisi");
 
-            // Check if the user exist or not
+            // Check user
             var user = await _userManager.FindByEmailAsync(request.Username);
             if (user == null)
                 return Unauthorized("Email belum terdaftar");
 
-            // Check Account Lock
+            // Check Status lockout
             if (await _userManager.IsLockedOutAsync(user))
             {
                 var lockoutEnd = await _userManager.GetLockoutEndDateAsync(user);
-                return Unauthorized($"Akun terkunci hingga {lockoutEnd}");
+                return Unauthorized(new
+                {
+                    Message = $"Akun terkunci hingga {lockoutEnd}",
+                    IsLockedOut = true,
+                    LockoutEnd = lockoutEnd
+                });
             }
 
-            // Check Password
+            // Check password
             if (!await _userManager.CheckPasswordAsync(user, request.Password))
             {
-                // Count Failed try
                 await _userManager.AccessFailedAsync(user);
 
-                // Check if the account was locked
                 if (await _userManager.IsLockedOutAsync(user))
-                    return Unauthorized("Akun terkunci setelah 3x percobaan gagal");
+                {
+                    return Unauthorized(new
+                    {
+                        Message = "Akun terkunci setelah 3x percobaan gagal",
+                        IsLockedOut = true,
+                        RemainingAttempts = 0
+                    });
+                }
 
-                return Unauthorized("Password salah");
+                var remainingAttempts = _userManager.Options.Lockout.MaxFailedAccessAttempts - (await _userManager.GetAccessFailedCountAsync(user));
+
+                return Unauthorized(new
+                {
+                    Message = $"Password salah. Percobaan tersisa: {remainingAttempts}",
+                    IsLockedOut = false,
+                    RemainingAttempts = remainingAttempts
+                });
             }
 
-            // Reset Counter if the login success
+            // Reset counter if berhasil
             await _userManager.ResetAccessFailedCountAsync(user);
 
-            // Generate Token
+            // Generate token
             var token = GenerateJwtToken(user);
-            
-            return Ok(new 
+
+            return Ok(new
             {
                 Token = token,
                 Expires = DateTime.Now.AddHours(1),
@@ -126,7 +150,7 @@ namespace AuthServer.Controllers
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
-            
+
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(

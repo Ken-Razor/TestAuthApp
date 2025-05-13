@@ -1,0 +1,132 @@
+@page "/login"
+@using AuthClient.Shared
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@inject LocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="auth-container">
+    <div class="auth-box">
+        <h2 class="auth-title">LOGIN</h2>
+        
+        <EditForm Model="@loginModel" OnValidSubmit="@HandleLogin">
+            <DataAnnotationsValidator />
+            
+            <div class="form-group">
+                <label>Email/Username</label>
+                <InputText @bind-Value="loginModel.Username" class="form-control" />
+                <ValidationMessage For="@(() => loginModel.Username)" />
+            </div>
+            
+            <div class="form-group">
+                <label>Password</label>
+                <InputText @bind-Value="loginModel.Password" type="password" class="form-control" />
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+            
+            <button type="submit" class="auth-button" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span class="spinner-border spinner-border-sm"></span>
+                    <span> Loading...</span>
+                }
+                else
+                {
+                    <span>LOGIN</span>
+                }
+            </button>
+        </EditForm>
+        
+        <div class="auth-footer">
+            <span>Belum punya akun?? </span>
+            <a href="/register" class="auth-link">Register disini</a>
+        </div>
+    </div>
+</div>
+
+@if (showErrorModal)
+{
+    <div class="modal-backdrop">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Login Error</h3>
+                <button @onclick="CloseModal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                @errorMessage
+            </div>
+            <div class="modal-footer">
+                <button @onclick="CloseModal" class="modal-button">OK</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private LoginRequest loginModel = new();
+    private string errorMessage = string.Empty;
+    private bool showErrorModal = false;
+    private bool isLoading = false;
+
+    private async Task HandleLogin()
+    {
+        isLoading = true;
+        errorMessage = string.Empty;
+        
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/login", loginModel);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
+                await LocalStorage.SetAsync("jwt_token", result!.Token);
+                
+                // Calling StateChanged to update the auth state..
+                ((CustomAuthStateProvider)AuthStateProvider).StateChanged();
+                
+                // Redirect
+                Navigation.NavigateTo("/", forceLoad: true);
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                errorMessage = FormatErrorMessage(errorContent);
+                showErrorModal = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Terjadi kesalahan: {ex.Message}";
+            showErrorModal = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private string FormatErrorMessage(string errorContent)
+    {
+        try 
+        {
+            // Try parse JSON error
+            var errorJson = System.Text.Json.JsonDocument.Parse(errorContent);
+            if (errorJson.RootElement.TryGetProperty("message", out var message))
+            {
+                return message.GetString() ?? "Login gagal";
+            }
+            return errorContent;
+        }
+        catch
+        {
+            return errorContent;
+        }
+    }
+
+    private void CloseModal()
+    {
+        showErrorModal = false;
+    }
+}

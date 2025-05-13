@@ -1,0 +1,269 @@
+@page "/register"
+@using AuthClient.Shared
+@using System.Text.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<div class="auth-container">
+    <div class="auth-box">
+        <h2 class="auth-title">REGISTER</h2>
+        
+        <EditForm Model="@registerModel" OnValidSubmit="@HandleRegister">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            
+            <div class="form-group">
+                <label>Email/Username</label>
+                <InputText @bind-Value="registerModel.Username" class="form-control" />
+                <ValidationMessage For="@(() => registerModel.Username)" />
+            </div>
+            
+            <div class="form-group">
+                <label>Password</label>
+                <InputText @bind-Value="registerModel.Password" 
+                         type="password" 
+                         class="form-control" 
+                         @oninput="UpdatePasswordRequirements" />
+                <ValidationMessage For="@(() => registerModel.Password)" />
+                
+                <div class="password-requirements-box">
+                    <p class="requirements-title">Password requirements:</p>
+                    <div class="requirements-list">
+                        <div class="requirement-item @(passwordHasSpecialChar ? "requirement-met" : "requirement-not-met")">
+                            <span class="requirement-icon">
+                                @if(passwordHasSpecialChar) { <text>✓</text> } else { <text>✗</text> }
+                            </span>
+                            <span class="requirement-text">At least one special character (!@@#$%^&* etc.)</span>
+                        </div>
+                        <div class="requirement-item @(passwordHasNumber ? "requirement-met" : "requirement-not-met")">
+                            <span class="requirement-icon">
+                                @if(passwordHasNumber) { <text>✓</text> } else { <text>✗</text> }
+                            </span>
+                            <span class="requirement-text">At least one number (0-9)</span>
+                        </div>
+                        <div class="requirement-item @(passwordHasUpper ? "requirement-met" : "requirement-not-met")">
+                            <span class="requirement-icon">
+                                @if(passwordHasUpper) { <text>✓</text> } else { <text>✗</text> }
+                            </span>
+                            <span class="requirement-text">At least one uppercase letter (A-Z)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Full Name</label>
+                <InputText @bind-Value="registerModel.FullName" class="form-control" />
+                <ValidationMessage For="@(() => registerModel.FullName)" />
+            </div>
+            
+            <button type="submit" class="auth-button" disabled="@(isLoading || !AllPasswordRequirementsMet)">
+                @if (isLoading)
+                {
+                    <span class="spinner-border spinner-border-sm"></span>
+                    <span> Loading...</span>
+                }
+                else
+                {
+                    <span>REGISTER</span>
+                }
+            </button>
+        </EditForm>
+        
+        <div class="auth-footer">
+            <span>Sudah punya akun? </span>
+            <a href="/login" class="auth-link">Login disini</a>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+@if (showSuccessModal)
+{
+    <div class="modal-backdrop">
+        <div class="success-modal">
+            <div class="success-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#4BB543" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <div class="success-content">
+                <h3>Registration Successful!</h3>
+                <p>Your account has been created successfully.</p>
+                <div class="user-details">
+                    <p><strong>Email:</strong> @registerModel.Username</p>
+                    <p><strong>Name:</strong> @registerModel.FullName</p>
+                </div>
+            </div>
+            <div class="success-actions">
+                <button @onclick="RedirectToLogin" class="success-button">
+                    Continue to Login
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Error Modal -->
+@if (showErrorModal)
+{
+    <div class="modal-backdrop">
+        <div class="error-modal">
+            <div class="error-modal-header">
+                <div class="error-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <h3 class="error-modal-title">Registration Error</h3>
+            </div>
+            
+            <div class="error-modal-body">
+                @if (errorMessages.Count > 0)
+                {
+                    <p class="error-message">Please fix the following requirements:</p>
+                    <div class="error-list">
+                        @foreach (var error in errorMessages)
+                        {
+                            <div class="error-list-item">@error</div>
+                        }
+                    </div>
+                }
+                else if (!string.IsNullOrEmpty(singleErrorMessage))
+                {
+                    <p class="error-message">@singleErrorMessage</p>
+                }
+            </div>
+            
+            <div class="error-modal-footer">
+                <button @onclick="CloseModal" class="error-modal-button">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private RegisterRequest registerModel = new();
+    private List<string> errorMessages = new();
+    private string singleErrorMessage = string.Empty;
+    private bool showErrorModal = false;
+    private bool showSuccessModal = false;
+    private bool isLoading = false;
+    private bool passwordHasSpecialChar = false;
+    private bool passwordHasNumber = false;
+    private bool passwordHasUpper = false;
+
+    private bool AllPasswordRequirementsMet => 
+        passwordHasSpecialChar && 
+        passwordHasNumber && 
+        passwordHasUpper;
+
+    private void UpdatePasswordRequirements(ChangeEventArgs e)
+    {
+        registerModel.Password = e.Value?.ToString() ?? "";
+        passwordHasSpecialChar = registerModel.Password.Any(c => !char.IsLetterOrDigit(c));
+        passwordHasNumber = registerModel.Password.Any(char.IsDigit);
+        passwordHasUpper = registerModel.Password.Any(char.IsUpper);
+        StateHasChanged();
+    }
+
+    private async Task HandleRegister()
+    {
+        isLoading = true;
+        errorMessages.Clear();
+        singleErrorMessage = string.Empty;
+        
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/register", registerModel);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                showSuccessModal = true;
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                FormatErrorMessages(errorContent);
+                showErrorModal = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            singleErrorMessage = $"Registration failed: {ex.Message}";
+            showErrorModal = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void FormatErrorMessages(string errorContent)
+    {
+        errorMessages.Clear();
+        singleErrorMessage = string.Empty;
+        
+        try
+        {
+            var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(errorContent);
+            
+            if (errorResponse?.Errors != null && errorResponse.Errors.Count > 0)
+            {
+                errorMessages = errorResponse.Errors
+                    .Select(e => e.Replace("Passwords must have at least one", "• Must contain at least one")
+                    .Replace("non alphanumeric character", "special character")
+                    .Replace("digit ('0'-'9')", "number")
+                    .Replace("uppercase ('A'-'Z')", "uppercase letter")
+                    .Replace(".", ""))
+                    .ToList();
+            }
+            else if (!string.IsNullOrEmpty(errorResponse?.Message))
+            {
+                singleErrorMessage = errorResponse.Message;
+            }
+            else
+            {
+                singleErrorMessage = "Please check your registration details";
+            }
+        }
+        catch
+        {
+            if (!string.IsNullOrWhiteSpace(errorContent))
+            {
+                var cleanedError = errorContent
+                    .Replace("\"", "")
+                    .Replace("{", "")
+                    .Replace("}", "")
+                    .Replace("[", "")
+                    .Replace("]", "")
+                    .Trim();
+                
+                singleErrorMessage = !string.IsNullOrEmpty(cleanedError) 
+                    ? cleanedError 
+                    : "An unknown error occurred";
+            }
+            else
+            {
+                singleErrorMessage = "An unknown error occurred";
+            }
+        }
+    }
+
+    private void RedirectToLogin()
+    {
+        showSuccessModal = false;
+        Navigation.NavigateTo("/login");
+    }
+
+    private void CloseModal()
+    {
+        showErrorModal = false;
+    }
+}

@@ -1,0 +1,52 @@
+﻿@page "/"
+@attribute [Authorize]
+@inject NavigationManager Navigation
+@inject LocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+
+<PageTitle>Home</PageTitle>
+
+<div class="home-container">
+    <div class="welcome-card">
+        <h1>Welcome, @userFullName!</h1>
+        <p>You have successfully logged in to the system.</p>
+        
+        <div class="user-info">
+            <p><strong>Email:</strong> @userEmail</p>
+            <p><strong>Login Time:</strong> @DateTime.Now.ToString("f")</p>
+        </div>
+        
+        <button @onclick="Logout" class="btn btn-danger">
+            Logout
+        </button>
+    </div>
+</div>
+
+@code {
+    private string userFullName = string.Empty;
+    private string userEmail = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            userFullName = user.FindFirst("full_name")?.Value ?? string.Empty;
+            userEmail = user.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+        }
+        else
+        {
+            Navigation.NavigateTo("/login");
+        }
+    }
+
+    private async Task Logout()
+    {
+        await LocalStorage.RemoveAsync("jwt_token");
+        ((CustomAuthStateProvider)AuthStateProvider).StateChanged();
+        Navigation.NavigateTo("/login");
+    }
+}

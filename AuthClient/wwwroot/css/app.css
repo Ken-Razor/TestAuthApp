@@ -1,0 +1,614 @@
+/* Base Styles */
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+.welcome-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.user-info {
+    background: #f1f1f1;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.user-info p {
+    margin: 5px 0;
+}
+
+/* Auth Styles */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+.auth-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.auth-title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    border-color: #4a6baf;
+    outline: none;
+}
+
+/* Buttons */
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.auth-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #4a6baf;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 1rem;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.auth-button:hover {
+    background-color: #3a5a9f;
+}
+
+.auth-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Links */
+.auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.auth-link {
+    color: #4a6baf;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.auth-link:hover {
+    color: #3a5a9f;
+    text-decoration: underline;
+}
+
+/* Alerts & Validation */
+.alert {
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.validation-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+/* Modal Styles */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s;
+}
+
+.modal-header {
+    padding: 1.25rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #d9534f;
+    font-size: 1.25rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: #666;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    color: #333;
+}
+
+.modal-body p {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 0;
+}
+
+.error-icon {
+    text-align: center;
+    font-size: 3rem;
+    color: #d9534f;
+    margin-bottom: 1rem;
+}
+
+.attempts-warning {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #fff3cd;
+    color: #856404;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.modal-footer {
+    padding: 1rem;
+    border-top: 1px solid #eee;
+    text-align: right;
+}
+
+.modal-button {
+    padding: 0.5rem 1.25rem;
+    background-color: #4a6baf;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.modal-button:hover {
+    background-color: #3a5a9f;
+}
+
+/* Spinner & Animations */
+.spinner-border {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: text-bottom;
+    border: 0.2em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border 0.75s linear infinite;
+}
+
+.fa-clock {
+    margin-right: 5px;
+}
+
+@keyframes spinner-border {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .auth-box, .welcome-card {
+        padding: 1.5rem;
+    }
+    
+    .modal-box {
+        width: 95%;
+    }
+}
+
+/* Success Modal Styles */
+.success-modal {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 450px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    animation: modalFadeIn 0.3s;
+}
+
+.success-icon {
+    margin-bottom: 1.5rem;
+}
+
+.success-icon svg {
+    width: 64px;
+    height: 64px;
+}
+
+.success-content h3 {
+    color: #4BB543;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.success-content p {
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+.user-details {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    text-align: left;
+}
+
+.user-details p {
+    margin: 0.5rem 0;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.user-details strong {
+    color: #555;
+    display: inline-block;
+    width: 80px;
+}
+
+.success-actions {
+    margin-top: 1.5rem;
+}
+
+.success-button {
+    padding: 0.75rem 2rem;
+    background-color: #4BB543;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.success-button:hover {
+    background-color: #3da336;
+}
+
+/* Animation */
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Error Modal Styles */
+.modal-box {
+    max-width: 500px;
+    width: 90%;
+}
+
+.error-icon {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #d9534f;
+    margin-bottom: 1rem;
+}
+
+.error-icon i {
+    color: #d9534f;
+}
+
+.error-list {
+    margin: 1rem 0;
+    padding: 0;
+    text-align: left;
+}
+
+.error-list ul {
+    padding-left: 1.5rem;
+    margin: 0;
+}
+
+.error-list li {
+    margin-bottom: 0.5rem;
+    color: #721c24;
+    list-style-type: disc;
+}
+
+.modal-body h4 {
+    text-align: center;
+    color: #d9534f;
+    margin-bottom: 1rem;
+}
+
+/* Password Requirements */
+.password-requirements {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.password-requirements ul {
+    margin: 0.25rem 0 0 1rem;
+    padding: 0;
+}
+
+.password-requirements li {
+    list-style-type: none;
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 0.25rem;
+    color: #6c757d;
+}
+
+.password-requirements li:before {
+    content: "○";
+    position: absolute;
+    left: 0;
+}
+
+.password-requirements li.requirement-met {
+    color: #28a745;
+}
+
+.password-requirements li.requirement-met:before {
+    content: "✓";
+}
+
+.password-requirements-box {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.requirements-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.requirements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.requirement-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    margin-right: 8px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    line-height: 20px;
+}
+
+.requirement-text {
+    flex: 1;
+}
+
+.requirement-met {
+    color: #28a745;
+}
+
+.requirement-met .requirement-icon {
+    background-color: #28a745;
+    color: white;
+}
+
+.requirement-not-met {
+    color: #6c757d;
+}
+
+.requirement-not-met .requirement-icon {
+    background-color: #f8f9fa;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+}
+
+
+/* Error Modal Styles */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.error-modal {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: modalFadeIn 0.3s ease-out;
+    overflow: hidden;
+}
+
+.error-modal-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+    background-color: #fffafa;
+}
+
+.error-icon {
+    margin-bottom: 10px;
+}
+
+.error-modal-title {
+    margin: 0;
+    color: #dc3545;
+    font-size: 1.3rem;
+}
+
+.error-modal-body {
+    padding: 20px;
+    text-align: center;
+}
+
+.error-message {
+    color: #333;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.error-list {
+    margin: 15px 0 0 0;
+    padding: 0;
+    text-align: left;
+}
+
+.error-list-item {
+    background-color: #fff5f5;
+    color: #dc3545;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border-left: 4px solid #dc3545;
+    font-size: 0.9rem;
+}
+
+.error-modal-footer {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #f0f0f0;
+}
+
+.error-modal-button {
+    padding: 8px 25px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.error-modal-button:hover {
+    background-color: #c82333;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

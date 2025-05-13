@@ -20,7 +20,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     // Lockout Settings (for Login Attempt feature)
     options.Lockout.MaxFailedAccessAttempts = 3; // Lock after 3 time failing
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // 5 minute lock duration
-    
+
     // Password Setting
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
@@ -57,6 +57,16 @@ builder.Services.AddControllers();
 // Swagger 
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Middleware Pipeline
@@ -65,6 +75,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
