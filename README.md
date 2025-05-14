@@ -49,7 +49,7 @@ TestAuthApp/
 ### Installation
 
 1. Clone the repository:
-    git clone https://github.com/yourusername/TestAuthApp.git
+    git clone https://github.com/Ken-Razor/TestAuthApp.git
     cd TestAuthApp
 
 2. Restore dependencies:
